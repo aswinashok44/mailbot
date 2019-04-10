@@ -36,8 +36,13 @@ def level_required(level):
 
 	return level_required_wrap
 
+@app.route("/unauthorized")
+def unauthorized():
+	return "unauthorized";
+
 @app.route("/")
 @login_required
+@level_required(1)
 def home():
 	return render_template('index.html')
 

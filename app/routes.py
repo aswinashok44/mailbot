@@ -9,7 +9,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 @app.route("/")
 @login_required
-def hello():
+def home():
 	return render_template('index.html')
 
 @app.route("/login", methods=['GET', 'POST'])
@@ -23,13 +23,13 @@ def login():
 			flash('Invalid username or password')
 			return redirect(url_for('login'))
 		login_user(user)
-		return redirect(url_for('hello'))
+		return redirect(url_for('home'))
 	return render_template('login.html', form=form, title="Login")
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if current_user.is_authenticated:
-        return redirect(url_for('hello'))
+        return redirect(url_for('home'))
     form = RegistrationForm()
     if form.validate_on_submit():
     	user = User(roll=form.roll.data.lower(), email=form.email.data.lower(), fname=form.fname.data, lname=form.lname.data)
@@ -43,4 +43,4 @@ def register():
 @app.route('/logout')
 def logout():
  	logout_user()
- 	return redirect(url_for('hello'))
+ 	return redirect(url_for('home'))

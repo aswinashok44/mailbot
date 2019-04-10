@@ -30,3 +30,12 @@ class RegistrationForm(FlaskForm):
     def validate_password(self,password):
     	if len(password.data) < 8:
     		raise ValidationError('Please keep a password longer than 8 characters')
+
+class AddForm(FlaskForm):
+	title = StringField('Title', validators=[DataRequired()])
+	roll = StringField('Recipient Roll Number', validators=[DataRequired()])
+	submit = SubmitField('Add')
+	def validate_roll(self,roll):
+		user = User.query.filter_by(roll=roll.data.lower()).first()
+		if user is None:
+			raise ValidationError('Please use a valid Roll Number.')

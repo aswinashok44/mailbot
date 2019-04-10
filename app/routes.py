@@ -6,6 +6,7 @@ from app.forms import LoginForm, RegistrationForm, AddForm
 from flask import render_template, redirect, url_for
 from flask_login import current_user, login_user, login_required, logout_user
 from app.models import User, Courier
+from app.mail import email_new
 from werkzeug.security import generate_password_hash, check_password_hash
 import math, random
 
@@ -85,6 +86,7 @@ def add():
 		courier = Courier(title=form.title.data, recv=user.id, verify_key=key)
 		db.session.add(courier)
 		db.session.commit()
+		email_new(user,courier)
 		flash('Successfully Added')
 		return redirect(url_for('home'))
 	return render_template('add.html', title='Add', form=form)

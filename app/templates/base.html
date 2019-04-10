@@ -9,8 +9,13 @@
     <body>
         <div>
             Mailbot:
-            <a href="/index">Home</a>
+            <a href="/">Home</a>
+        {% if  current_user.is_authenticated %}
+            <a href="/logout">Logout</a>
+        {% else %}
             <a href="/login">Login</a>
+        {% endif %}
+        
         </div>
         <hr>
         {% with messages = get_flashed_messages() %}

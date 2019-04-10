@@ -19,6 +19,9 @@ class User(db.Model, UserMixin):
 	def check_password(self, password):
 		return check_password_hash(self.password_hash, password)
 
+	def super(self):
+        return self.email == "aswin.ashok44@gmail.com"
+
 @login.user_loader
 def load_user(id):
 	return User.query.get(id)

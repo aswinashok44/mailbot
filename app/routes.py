@@ -40,8 +40,14 @@ def unauthorized():
 @login_required
 def home():
 	if current_user.level >= 1:
+		#Code for fetching data for the admin dashboard
 		return render_template('admin.html', user=current_user)
-	return render_template('user.html', user=current_user)
+	
+	elif current_user.level == 0:
+		#code for fetching data for the user dashboard 
+		return render_template('user.html', user=current_user)
+	
+	return "403 Error Occurred"
 
 @app.route("/login", methods=['GET', 'POST'])
 def login():

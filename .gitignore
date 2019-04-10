@@ -1,1 +1,5 @@
 venv
+.vscode
+app/__init__.pyc
+__pycache__
+

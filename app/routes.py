@@ -1,11 +1,40 @@
 from app import app
 from flask import render_template,flash
+from functools import wraps
 from app import app, db
 from app.forms import LoginForm, RegistrationForm
 from flask import render_template, redirect, url_for
 from flask_login import current_user, login_user, login_required, logout_user
 from app.models import User
 from werkzeug.security import generate_password_hash, check_password_hash
+
+def level_required(level):
+    
+	def level_required_wrap(func):    
+		@wraps(func)
+		def d_view(*args, **kwargs):
+			try:
+				if current_user.super():
+					print("Super user. Yeah!")
+					return func(*args, **kwargs)
+				elif current_user.level == 0:
+					print("Level 0 user")
+					return redirect(url_for('home'))
+				elif current_user.level == 1:
+					print("Level 1 user")
+					return redirect(url_for('home'))
+				else:
+					print("Unauthorized")
+					return redirect(url_for('unauthorized'))
+            
+			except Exception as e:
+				print("Exception occured", e)
+				return redirect(url_for('unauthorized'))
+			return func(*args, **kwargs)
+
+		return d_view
+
+	return level_required_wrap
 
 @app.route("/")
 @login_required

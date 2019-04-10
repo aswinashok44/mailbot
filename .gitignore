@@ -4,4 +4,4 @@ app/__init__.pyc
 __pycache__
 migrations
 app/__pycache__
-
+app/*.pyc

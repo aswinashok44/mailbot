@@ -24,15 +24,24 @@ def level_required(level):
 		return d_view
 	return level_required_wrap
 
+def generateOTP():
+	string = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
+	OTP = "" 
+	length = len(string)
+	for i in range(6):
+		OTP += string[math.floor(random.random() * length)] 
+	return OTP 
+
 @app.route("/unauthorized")
 def unauthorized():
-	return "Unauthorized"
+	return "You are not nauthorized for this operation"
 
 @app.route("/")
 @login_required
-@level_required(1)
 def home():
-	return render_template('index.html')
+	if current_user.level >= 1:
+		return render_template('admin.html', user=current_user)
+	return render_template('user.html', user=current_user)
 
 @app.route("/login", methods=['GET', 'POST'])
 def login():
@@ -67,15 +76,7 @@ def logout():
  	logout_user()
  	return redirect(url_for('home'))
 
-def generateOTP():
-	string = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
-	OTP = "" 
-	length = len(string)
-	for i in range(6):
-		OTP += string[math.floor(random.random() * length)] 
-	return OTP 
-
-@app.route('/add', methods=['GET', 'POST'])
+@app.route('/admin/add', methods=['GET', 'POST'])
 @login_required
 @level_required(1)
 def add():

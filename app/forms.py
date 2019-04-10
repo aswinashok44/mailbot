@@ -20,12 +20,12 @@ class RegistrationForm(FlaskForm):
     def validate_roll(self, roll):
         user = User.query.filter_by(roll=roll.data).first()
         if user is not None:
-            raise ValidationError('Please use a different Roll Number.')
+            raise ValidationError('Roll number already registered')
 
     def validate_email(self, email):
         user = User.query.filter_by(email=email.data).first()
         if user is not None:
-            raise ValidationError('Please use a different email address.')
+            raise ValidationError('Email already registered')
 
     def validate_password(self,password):
     	if len(password.data) < 8:

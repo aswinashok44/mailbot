@@ -18,7 +18,7 @@ def send_mail(sub, htmlbody, recipient):
     msg['To'] = recipient
     part1 = MIMEText(htmlbody, 'html')
     msg.attach(part1)
-    smtpserver.sendmail(user, recipient, msg.as_string())
+    smtpserver.sendmail(Config.MAIL_DEFAULT_SENDER, recipient, msg.as_string())
     smtpserver.close()
 
 def email_new(user,courier):

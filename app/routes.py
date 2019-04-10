@@ -14,7 +14,7 @@ def level_required(level):
 		@wraps(func)
 		def d_view(*args, **kwargs):
 			try:
-				if current_user.level>=level:
+				if current_user.level >= level:
 					return func(*args, **kwargs)
 			except Exception as e:
 				print("Exception occured", e)
@@ -25,11 +25,11 @@ def level_required(level):
 
 @app.route("/unauthorized")
 def unauthorized():
-	return "unauthorized";
+	return "Unauthorized"
 
 @app.route("/")
 @login_required
-# @level_required(1)
+@level_required(1)
 def home():
 	return render_template('index.html')
 
@@ -76,7 +76,7 @@ def generateOTP():
 
 @app.route('/add', methods=['GET', 'POST'])
 @login_required
-# @level_required(1)
+@level_required(1)
 def add():
 	form = AddForm()
 	if form.validate_on_submit():

@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block content %}
+	<div class="container">
+		<h2>Collected Courier</h2>
+		{% if couriers %}
+		<table>
+		  <tr>
+		    <th>Receiver</th>
+		    <th>Title</th> 
+		    <th>Tracking Id</th>
+		    <th>Collected On</th>
+		  </tr>
+		  {% for item in couriers %}
+		  	<tr>
+		  		<td> {{item.User.fname}} </td>
+		  		<td> {{item.Courier.Title}} </td>
+		  		<td> {{item.Courier.tracking_id}}</td>
+		  		<td> {{item.Courier.collected_time}}</button> </td>
+		  	</tr>
+		  {% endfor %}
+		</table>
+		{% else %}
+		  	<h2>No Collected Couriers</h2>
+		{% endif %}
+	</div>
+{% endblock %}

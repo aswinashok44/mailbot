@@ -2,6 +2,7 @@
 {% block content %}
 	<div class="container">
 		<h2>Uncollected Courier</h2>
+		{% if couriers %}
 		<table>
 		  <tr>
 		    <th>Receiver</th>
@@ -18,5 +19,8 @@
 		  	</tr>
 		  {% endfor %}
 		</table>
+		{% else %}
+		  	<h2>No Collected Couriers</h2>
+		{% endif %}
 	</div>
 {% endblock %}

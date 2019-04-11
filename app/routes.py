@@ -98,7 +98,16 @@ def add():
 		return redirect(url_for('home'))
 	return render_template('add.html', title='Add', form=form)
 
-@app.route('/view')
-def view():
+@app.route('/admin/uncollected')
+@login_required
+@level_required(1)
+def uncollected_admin():
 	couriers = db.session.query(Courier,User).filter(Courier.recv==User.id and Courier.collected==False).all()
-	return render_template('uncollected.html', title='Uncollected', couriers=couriers)
+	return render_template('uncollected_admin.html', title='Uncollected', couriers=couriers)
+
+@app.route('/admin/collected')
+@login_required
+@level_required(1)
+def collected_admin():
+	couriers = db.session.query(Courier,User).filter(Courier.recv==User.id and Courier.collected==True).all()
+	return render_template('collected_admin.html', title='Collected', couriers=couriers)

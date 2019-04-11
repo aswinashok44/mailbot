@@ -26,10 +26,13 @@ input[type="password"] {
     border: 2px solid #000;
     display: flex;
     align-items: center;
-    margin-bottom: 20px;
+    margin-bottom: 5px;
     color: 	#D3D3D3;
 }
-
+.st-form-errors{
+    margin-bottom: 20px;
+    color: #FF0800;
+}
 ::-webkit-input-placeholder { /* Chrome/Opera/Safari */
     font-family: 'Source Sans Pro', sans-serif;
 }

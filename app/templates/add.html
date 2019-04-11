@@ -7,27 +7,30 @@
                 <p>Provide the following details</p>
                 <form action="" method="post" novalidate>
                     {{ form.hidden_tag() }}
-                    <p>
-                        {{ form.title.label }}<br>
+                    <div class="st-form-field">
                         {{ form.title(size=32) }}<br>
+                    </div>
+                    <div class="st-form-errors">
                         {% for error in form.title.errors %}
                         <span style="color: red;">[{{ error }}]</span>
                         {% endfor %}
-                    </p>
-                    <p>
-                        {{ form.roll.label }}<br>
+                    </div>
+                    <div class="st-form-field">
                         {{ form.roll(size=32) }}<br>
+                    </div>
+                    <div class="st-form-errors">
                         {% for error in form.roll.errors %}
                         <span style="color: red;">[{{ error }}]</span>
                         {% endfor %}
-                    </p>
-                    <p>
-                        {{ form.tracking_id.label }}<br>
+                    </div>
+                    <div class="st-form-field">
                         {{ form.tracking_id(size=32) }}<br>
+                    </div>
+                    <div class="st-form-errors">
                         {% for error in form.tracking_id.errors %}
                         <span style="color: red;">[{{ error }}]</span>
                         {% endfor %}
-                    </p>
+                    </div>
                     <p>{{ form.submit() }}</p>
                 </form>
             </div>

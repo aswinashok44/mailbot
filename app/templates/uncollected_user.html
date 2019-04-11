@@ -2,14 +2,14 @@
 {% block content %}
 	<div class="container">
 		{% if couriers %}
-		<h2>Collected Couriers</h2>
+		<h2>Uncollected Couriers</h2>
 		<table>
 		  <tr>
 		    <th>Receiver</th>
 		    <th>Receiver Roll</th>
 		    <th>Title</th> 
 		    <th>Tracking Id</th>
-		    <th>Collected On</th>
+		    <th>Resend Verification Key</th>
 		  </tr>
 		  {% for item in couriers %}
 		  	<tr>
@@ -17,12 +17,12 @@
 		  		<td> {{item.User.roll}} </td>
 		  		<td> {{item.Courier.title}} </td>
 		  		<td> {{item.Courier.tracking_id}}</td>
-		  		<td> {{item.Courier.collected_time}}</button> </td>
+		  		<td> <button type="button" onclick="window.location.href='/user/resend?id={{item.Courier.id}}'">Resend</button> </td>
 		  	</tr>
 		  {% endfor %}
 		</table>
 		{% else %}
-		  	<h2>No Collected Couriers</h2>
+		  	<h2>No Uncollected Couriers</h2>
 		{% endif %}
 	</div>
 {% endblock %}

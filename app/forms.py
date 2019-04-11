@@ -28,8 +28,8 @@ class RegistrationForm(FlaskForm):
             raise ValidationError('Email already registered')
 
     def validate_password(self,password):
-    	if len(password.data) < 8:
-    		raise ValidationError('Please keep a password longer than 8 characters')
+    	if len(password.data) < 8 and len(password.data) >16:
+    		raise ValidationError('Please keep a password with length between 8 and 16 characters')
 
 class AddForm(FlaskForm):
 	title = StringField('Title', validators=[DataRequired()])

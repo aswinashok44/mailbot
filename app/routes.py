@@ -167,3 +167,42 @@ def mark_collected():
 		flash('Courier Marked as Collected')
 		return redirect(url_for('home'))
 	return render_template('mark_collected.html',title='Mark',form=form, courier=courier, user=user)
+
+@app.route('/user/uncollected')
+@login_required
+@level_required(0)
+def uncollected_user():
+	couriers = db.session.query(Courier,User).filter(Courier.recv==User.id, Courier.collected== False, User.id==current_user.id).all()
+	return render_template('uncollected_user.html', title='Uncollected', couriers=couriers)
+
+@app.route('/user/collected')
+@login_required
+@level_required(0)
+def collected_user():
+	couriers = db.session.query(Courier,User).filter(Courier.recv==User.id, Courier.collected== True, User.id==current_user.id).all()
+	return render_template('collected_user.html', title='Uncollected', couriers=couriers)
+
+@app.route('/user/resend', methods=['GET', 'POST'])
+@login_required
+@level_required(0)
+def resend_key():
+	try:
+		courier_id = int(request.args.get("id"))
+	except Exception as e:
+		print (e)
+		flash('Invalid Courier Id')
+		return redirect(url_for('home'))
+	courier = Courier.query.filter_by(id=courier_id, collected=False).first()
+	if not courier:
+		flash('Invalid Courier Id')
+		return redirect(url_for('home'))
+	user = User.query.filter_by(id=courier.recv).first()
+	if user.id != current_user.id:
+		flash('Invalid Courier Id')
+		return redirect(url_for('home'))
+	try:
+		email_new(user,courier)
+	except Exception as e:
+		print (e)
+	flash('Check email inbox for verification key')
+	return redirect(url_for('uncollected_user'))

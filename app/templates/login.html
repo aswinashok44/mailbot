@@ -7,7 +7,7 @@
 
             <h1>Sign In</h1>
             <p>Please sign in to your account to continue</p>
-            <form action="" method="post" novalidate>
+            <form action="" method="post" novalidate autocomplete="off">
                 {{ form.hidden_tag() }}
                 <div class="st-form-field">
                     {{ form.email(size=32) }}<br>

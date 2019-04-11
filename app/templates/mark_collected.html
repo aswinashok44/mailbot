@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+    <div class="st-form-container">
+
+        <div class="st-form">
+
+            <h1>Mark Courier as Collected</h1>
+            <br>
+            <p>
+                Recepient: {{user.fname}}
+                <br>
+                Recepeint Roll: {{user.roll}}
+                <br>
+                Recepeint Email: {{user.email}}
+                <br>
+                Courier Title: {{courier.title}}
+                <br>
+                Courier Tracking Id: {{courier.tracking_id}}
+                <br>
+            </p>
+            <form action="" method="post" novalidate autocomplete="off">
+                {{ form.hidden_tag() }}
+                <div class="st-form-field">
+                    {{ form.key(size=32) }}<br>
+                </div>
+                <div class="st-form-errors">
+                    {% for error in form.key.errors %}
+                    <span>{{ error }}</span>
+                    {% endfor %}
+                </div>
+                <p>{{ form.submit() }}</p>
+            </form>
+        </div>
+    
+    </div>
+{% endblock %}

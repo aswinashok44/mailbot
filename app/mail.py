@@ -22,9 +22,23 @@ def send_mail(sub, htmlbody, recipient):
     smtpserver.close()
 
 def email_new(user,courier):
-    print(user, courier)
-    send_mail("You have a new Courier", 
+    send_mail("You have a new Courier - Mailbot", 
             htmlbody=render_template('emails/new.html', user=user, courier=courier), 
+            recipient=user.email
+            )
+    return "success"
+
+def email_collected(user,courier):
+    send_mail("Courier Collected - Mailbot", 
+            htmlbody=render_template('emails/collected.html', user=user, courier=courier), 
+            recipient=user.email
+            )
+    return "success"
+
+
+def email_new_user(user):
+    send_mail("Welcome - Mailbot", 
+            htmlbody=render_template('emails/new_user.html', user=user), 
             recipient=user.email
             )
     return "success"

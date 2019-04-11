@@ -12,7 +12,7 @@ class User(db.Model, UserMixin):
 	roll = db.Column(db.String(100), unique=True, index=True)
 	password_hash = db.Column(db.String(256))
 	verify = db.Column(db.String(256),unique=True)
-	level = db.Column(db.Integer, default=0)
+	level = db.Column(db.Integer, default=-1)
 
 	def set_password(self, password):
 		self.password_hash = generate_password_hash(password)

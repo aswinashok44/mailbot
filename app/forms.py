@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, IntegerField
 from wtforms.validators import DataRequired, Email, EqualTo, ValidationError
-from app.models import User
+from app.models import User, Courier
 
 class LoginForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired()], render_kw={"placeholder": "Email"})
@@ -40,3 +40,21 @@ class AddForm(FlaskForm):
 		user = User.query.filter_by(roll=roll.data.lower()).first()
 		if user is None:
 			raise ValidationError('Please use a valid roll number.')
+
+class MarkCollected(FlaskForm):
+	id = IntegerField('Courier Id', validators=[DataRequired()])
+	key = StringField('Verification Key', validators=[DataRequired()])
+	submit = SubmitField('Mark as Collected')
+	def validate_key(self, key):
+		courier = Courier.query.filter_by(id=self.id.data).first()
+		if courier is None or courier.verify_key != key.data or courier.collected == True:
+			raise ValidationError('Invalid Key or Courier')
+
+class VerifyEmail(FlaskForm):
+	id = IntegerField('User Id', validators=[DataRequired()])
+	key = StringField('Verification Key', validators=[DataRequired()])
+	submit = SubmitField('Verify Email')
+	def validate_key(self,key):
+		user = User.query.filter_by(id=self.id.data).first()
+		if user is None or user.verify != key.data :
+			raise ValidationError('Invalid key')

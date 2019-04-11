@@ -6,16 +6,18 @@
 		<table>
 		  <tr>
 		    <th>Receiver</th>
+		    <th>Receiver Roll</th>
 		    <th>Title</th> 
 		    <th>Tracking Id</th>
-		    <th>Mark</th>
+		    <th>Mark Collected</th>
 		  </tr>
 		  {% for item in couriers %}
 		  	<tr>
 		  		<td> {{item.User.fname}} </td>
-		  		<td> {{item.Courier.Title}} </td>
+		  		<td> {{item.User.roll}} </td>
+		  		<td> {{item.Courier.title}} </td>
 		  		<td> {{item.Courier.tracking_id}}</td>
-		  		<td> <button type="button" onclick="alert('Hello world!')">Click Me!</button> </td>
+		  		<td> <button type="button" onclick="window.location.href='/admin/mark?id={{item.Courier.id}}'">Mark Collected</button> </td>
 		  	</tr>
 		  {% endfor %}
 		</table>

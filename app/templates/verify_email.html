@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+    <div class="st-form-container">
+
+        <div class="st-form">
+            <h1>Verify Email</h1>
+            <br>
+            <form action="" method="post" novalidate autocomplete="off">
+                {{ form.hidden_tag() }}
+                <div class="st-form-field">
+                    {{ form.key(size=32) }}<br>
+                </div>
+                <div class="st-form-errors">
+                    {% for error in form.key.errors %}
+                    <span>{{ error }}</span>
+                    {% endfor %}
+                </div>
+                <p>{{ form.submit() }}</p>
+            </form>
+            <br>
+            <p>Didn't get welcome mail ? <a href="/resend">Resend</a></p>
+        </div>
+    
+    </div>
+{% endblock %}

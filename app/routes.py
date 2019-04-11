@@ -2,13 +2,13 @@ from app import app
 from flask import render_template,flash
 from functools import wraps
 from app import app, db
-from app.forms import LoginForm, RegistrationForm, AddForm
-from flask import render_template, redirect, url_for
+from app.forms import LoginForm, RegistrationForm, AddForm, MarkCollected, VerifyEmail
+from flask import render_template, redirect, url_for, request
 from flask_login import current_user, login_user, login_required, logout_user
 from app.models import User, Courier
-from app.mail import email_new
+from app.mail import email_new,email_collected, email_new_user
 from werkzeug.security import generate_password_hash, check_password_hash
-import math, random
+import math, random, datetime
 
 def level_required(level):
 	def level_required_wrap(func):    
@@ -19,8 +19,10 @@ def level_required(level):
 					return func(*args, **kwargs)
 			except Exception as e:
 				print("Exception occured", e)
-				return redirect(url_for('unauthorized'))
-			return redirect(url_for('unauthorized'))
+				flash('You are Unauthorized to access it')
+				return redirect(url_for('home'))
+			flash('You are Unauthorized to access it')
+			return redirect(url_for('home'))
 		return d_view
 	return level_required_wrap
 
@@ -36,16 +38,21 @@ def generateOTP():
 def unauthorized():
 	return "You are not nauthorized for this operation"
 
-@app.route("/")
+@app.route("/", methods=['GET','POST'])
 @login_required
 def home():
 	if current_user.level >= 1:
-		#Code for fetching data for the admin dashboard
-		return render_template('admin.html', user=current_user)
-	
+		return render_template('admin.html', user=current_user, title='Admin Dashboard')
 	elif current_user.level == 0:
-		#code for fetching data for the user dashboard 
-		return render_template('user.html', user=current_user)
+		return render_template('user.html', user=current_user, title='User Dashboard')
+	elif current_user.level == -1:
+		form = VerifyEmail()
+		form.id.data = current_user.id
+		if form.validate_on_submit():
+			current_user.level=0
+			db.session.commit()
+			return redirect(url_for('home'))
+		return render_template('verify_email.html', user=current_user, form=form, title='Verify Email')
 	
 	return "403 Error Occurred"
 
@@ -69,10 +76,14 @@ def register():
         return redirect(url_for('home'))
     form = RegistrationForm()
     if form.validate_on_submit():
-    	user = User(roll=form.roll.data.lower(), email=form.email.data.lower(), fname=form.fname.data, lname=form.lname.data)
+    	user = User(roll=form.roll.data.lower(), email=form.email.data.lower(), fname=form.fname.data, lname=form.lname.data, verify=generateOTP())
     	user.set_password(form.password.data)
     	db.session.add(user)
     	db.session.commit()
+    	try:
+    		email_new_user(user)
+    	except Exception as e:
+    		print(e)
     	flash('Congratulations, you are now a registered user!')
     	return redirect(url_for('login'))
     return render_template('register.html', title='Register', form=form)
@@ -81,6 +92,19 @@ def register():
 def logout():
  	logout_user()
  	return redirect(url_for('home'))
+
+@app.route('/resend')
+@login_required
+def resend():
+	if current_user.level>=0:
+		return redirect(url_for('home'))
+	else:
+		try:
+			email_new_user(current_user)
+		except Exception as e:
+			print(e)
+		flash("Mail Sent, Check your inbox")
+		return redirect(url_for('home'))
 
 @app.route('/admin/add', methods=['GET', 'POST'])
 @login_required
@@ -93,7 +117,10 @@ def add():
 		courier = Courier(title=form.title.data, recv=user.id, verify_key=key, tracking_id=form.tracking_id.data)
 		db.session.add(courier)
 		db.session.commit()
-		email_new(user,courier)
+		try:
+			email_new(user,courier)
+		except Exception as e:
+			print (e)
 		flash('Successfully Added')
 		return redirect(url_for('home'))
 	return render_template('add.html', title='Add', form=form)
@@ -102,12 +129,41 @@ def add():
 @login_required
 @level_required(1)
 def uncollected_admin():
-	couriers = db.session.query(Courier,User).filter(Courier.recv==User.id and Courier.collected==False).all()
+	couriers = db.session.query(Courier,User).filter(Courier.recv==User.id, Courier.collected== False).all()
 	return render_template('uncollected_admin.html', title='Uncollected', couriers=couriers)
 
 @app.route('/admin/collected')
 @login_required
 @level_required(1)
 def collected_admin():
-	couriers = db.session.query(Courier,User).filter(Courier.recv==User.id and Courier.collected==True).all()
+	couriers = db.session.query(Courier,User).filter(Courier.recv==User.id, Courier.collected== True).order_by(Courier.collected_time.desc()).all()
 	return render_template('collected_admin.html', title='Collected', couriers=couriers)
+
+@app.route('/admin/mark', methods=['GET', 'POST'])
+@login_required
+@level_required(1)
+def mark_collected():
+	try:
+		courier_id = int(request.args.get("id"))
+	except Exception as e:
+		print (e)
+		flash('Invalid Courier Id')
+		return redirect(url_for('home'))
+	courier = Courier.query.filter_by(id=courier_id, collected=False).first()
+	if not courier:
+		flash('Invalid Courier Id')
+		return redirect(url_for('home'))
+	user = User.query.filter_by(id=courier.recv).first()
+	form = MarkCollected()
+	form.id.data = courier_id
+	if form.validate_on_submit():
+		courier.collected=True
+		courier.collected_time= datetime.datetime.now()
+		db.session.commit()
+		try:
+			email_collected(user,courier)
+		except Exception as e:
+			print (e)
+		flash('Courier Marked as Collected')
+		return redirect(url_for('home'))
+	return render_template('mark_collected.html',title='Mark',form=form, courier=courier, user=user)

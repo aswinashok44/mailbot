@@ -1,6 +1,22 @@
 {% extends "base.html" %}
 {% block content %}
 	<div class="container">
-		<h1>Uncollected Courier</h1>
+		<h2>Uncollected Courier</h2>
+		<table>
+		  <tr>
+		    <th>Receiver</th>
+		    <th>Title</th> 
+		    <th>Tracking Id</th>
+		    <th>Mark</th>
+		  </tr>
+		  {% for item in couriers %}
+		  	<tr>
+		  		<td> {{item.User.fname}} </td>
+		  		<td> {{item.Courier.Title}} </td>
+		  		<td> {{item.Courier.tracking_id}}</td>
+		  		<td> <button type="button" onclick="alert('Hello world!')">Click Me!</button> </td>
+		  	</tr>
+		  {% endfor %}
+		</table>
 	</div>
 {% endblock %}

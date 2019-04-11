@@ -97,3 +97,8 @@ def add():
 		flash('Successfully Added')
 		return redirect(url_for('home'))
 	return render_template('add.html', title='Add', form=form)
+
+@app.route('/view')
+def view():
+	couriers = db.session.query(Courier,User).filter(Courier.recv==User.id and Courier.collected==False).all()
+	return render_template('uncollected.html', title='Uncollected', couriers=couriers)

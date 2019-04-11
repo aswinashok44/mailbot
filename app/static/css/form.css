@@ -15,4 +15,30 @@ input[type="email"],
 input[type="password"] {
     width: 350px;
     max-width: 100%;
+    height: 50px;
+    border: none;
+    padding: 5px;
+    font-size: 18px;
+}
+
+.st-form-field{
+    height: 60px;
+    border: 2px solid #000;
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    color: 	#D3D3D3;
+}
+
+::-webkit-input-placeholder { /* Chrome/Opera/Safari */
+    font-family: 'Source Sans Pro', sans-serif;
+}
+::-moz-placeholder { /* Firefox 19+ */
+    font-family: 'Source Sans Pro', sans-serif;
+}
+:-ms-input-placeholder { /* IE 10+ */
+    font-family: 'Source Sans Pro', sans-serif;
+}
+:-moz-placeholder { /* Firefox 18- */
+    font-family: 'Source Sans Pro', sans-serif;
 }

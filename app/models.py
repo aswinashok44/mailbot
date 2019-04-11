@@ -11,7 +11,7 @@ class User(db.Model, UserMixin):
 	lname = db.Column(db.String(75))
 	roll = db.Column(db.String(100), unique=True, index=True)
 	password_hash = db.Column(db.String(256))
-	verify = db.Column(db.String(256),unique=True)
+	verify = db.Column(db.String(256))
 	level = db.Column(db.Integer, default=-1)
 
 	def set_password(self, password):

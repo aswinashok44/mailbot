@@ -32,9 +32,9 @@ class RegistrationForm(FlaskForm):
     		raise ValidationError('Please keep a password with length between 8 and 16 characters')
 
 class AddForm(FlaskForm):
-	title = StringField('Title', validators=[DataRequired()])
-	roll = StringField('Recipient roll number', validators=[DataRequired()])
-	tracking_id = StringField('Tracking Id',validators=[DataRequired()])
+	title = StringField('Title', validators=[DataRequired()], render_kw={"placeholder": "Title"})
+	roll = StringField('Recipient roll number', validators=[DataRequired()], render_kw={"placeholder": "Recepient roll number"})
+	tracking_id = StringField('Tracking Id',validators=[DataRequired()], render_kw={"placeholder": "Tracking ID"})
 	submit = SubmitField('Add')
 	def validate_roll(self,roll):
 		user = User.query.filter_by(roll=roll.data.lower()).first()
@@ -42,8 +42,8 @@ class AddForm(FlaskForm):
 			raise ValidationError('Please use a valid roll number.')
 
 class MarkCollected(FlaskForm):
-	id = IntegerField('Courier Id', validators=[DataRequired()])
-	key = StringField('Verification Key', validators=[DataRequired()])
+	id = IntegerField('Courier Id', validators=[DataRequired()], render_kw={"placeholder": "Courier ID"})
+	key = StringField('Verification Key', validators=[DataRequired()], render_kw={"placeholder": "Verification Key"})
 	submit = SubmitField('Mark as Collected')
 	def validate_key(self, key):
 		courier = Courier.query.filter_by(id=self.id.data).first()
@@ -51,8 +51,8 @@ class MarkCollected(FlaskForm):
 			raise ValidationError('Invalid Key or Courier')
 
 class VerifyEmail(FlaskForm):
-	id = IntegerField('User Id', validators=[DataRequired()])
-	key = StringField('Verification Key', validators=[DataRequired()])
+	id = IntegerField('User Id', validators=[DataRequired()], render_kw={"placeholder": "User ID"})
+	key = StringField('Verification Key', validators=[DataRequired()], render_kw={"placeholder": "Verification Key"})
 	submit = SubmitField('Verify Email')
 	def validate_key(self,key):
 		user = User.query.filter_by(id=self.id.data).first()

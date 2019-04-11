@@ -31,6 +31,7 @@ class Courier(db.Model):
 	id = db.Column(db.Integer, primary_key=True, autoincrement=True)
 	recv = db.Column(db.Integer, db.ForeignKey(User.id))
 	title = db.Column(db.String(256))
+	tracking_id = db.Column(db.String(256))
 	recv_time = db.Column(db.DateTime, default=datetime.datetime.now)
 	collected = db.Column(db.Boolean, default=False)
 	returned = db.Column(db.Boolean, default=False)

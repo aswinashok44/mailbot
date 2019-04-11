@@ -90,7 +90,7 @@ def add():
 	if form.validate_on_submit():
 		user = User.query.filter_by(roll=form.roll.data.lower()).first()
 		key = generateOTP()
-		courier = Courier(title=form.title.data, recv=user.id, verify_key=key)
+		courier = Courier(title=form.title.data, recv=user.id, verify_key=key, tracking_id=form.tracking_id.data)
 		db.session.add(courier)
 		db.session.commit()
 		email_new(user,courier)

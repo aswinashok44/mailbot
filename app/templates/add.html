@@ -21,6 +21,13 @@
                         <span style="color: red;">[{{ error }}]</span>
                         {% endfor %}
                     </p>
+                    <p>
+                        {{ form.tracking_id.label }}<br>
+                        {{ form.tracking_id(size=32) }}<br>
+                        {% for error in form.tracking_id.errors %}
+                        <span style="color: red;">[{{ error }}]</span>
+                        {% endfor %}
+                    </p>
                     <p>{{ form.submit() }}</p>
                 </form>
             </div>

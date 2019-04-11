@@ -34,6 +34,7 @@ class RegistrationForm(FlaskForm):
 class AddForm(FlaskForm):
 	title = StringField('Title', validators=[DataRequired()])
 	roll = StringField('Recipient Roll Number', validators=[DataRequired()])
+	tracking_id = StringField('Tracking Id',validators=[DataRequired()])
 	submit = SubmitField('Add')
 	def validate_roll(self,roll):
 		user = User.query.filter_by(roll=roll.data.lower()).first()

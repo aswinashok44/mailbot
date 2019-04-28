@@ -2,11 +2,11 @@ from app import app
 from flask import render_template,flash
 from functools import wraps
 from app import app, db
-from app.forms import LoginForm, RegistrationForm, AddForm, MarkCollected, VerifyEmail
+from app.forms import LoginForm, RegistrationForm, AddForm, MarkCollected, VerifyEmail, AddCodForm
 from flask import render_template, redirect, url_for, request
 from flask_login import current_user, login_user, login_required, logout_user
-from app.models import User, Courier
-from app.mail import email_new,email_collected, email_new_user
+from app.models import User, Courier, CourierCod
+from app.mail import email_new,email_collected, email_new_user, email_new_cod, email_cod_approved
 from werkzeug.security import generate_password_hash, check_password_hash
 import math, random, datetime
 
@@ -129,14 +129,14 @@ def add():
 @login_required
 @level_required(1)
 def uncollected_admin():
-	couriers = db.session.query(Courier,User).filter(Courier.recv==User.id, Courier.collected== False).all()
+	couriers = db.session.query(Courier,User).filter(Courier.recv==User.id, Courier.collected== False, Courier.returned== False).all()
 	return render_template('uncollected_admin.html', title='Uncollected', couriers=couriers)
 
 @app.route('/admin/collected')
 @login_required
 @level_required(1)
 def collected_admin():
-	couriers = db.session.query(Courier,User).filter(Courier.recv==User.id, Courier.collected== True).order_by(Courier.collected_time.desc()).all()
+	couriers = db.session.query(Courier,User).filter(Courier.recv==User.id, Courier.collected== True, Courier.returned== False).order_by(Courier.collected_time.desc()).all()
 	return render_template('collected_admin.html', title='Collected', couriers=couriers)
 
 @app.route('/admin/mark', methods=['GET', 'POST'])
@@ -172,14 +172,14 @@ def mark_collected():
 @login_required
 @level_required(0)
 def uncollected_user():
-	couriers = db.session.query(Courier,User).filter(Courier.recv==User.id, Courier.collected== False, User.id==current_user.id).all()
+	couriers = db.session.query(Courier,User).filter(Courier.recv==User.id, Courier.collected== False, User.id==current_user.id, Courier.returned== False).all()
 	return render_template('uncollected_user.html', title='Uncollected', couriers=couriers)
 
 @app.route('/user/collected')
 @login_required
 @level_required(0)
 def collected_user():
-	couriers = db.session.query(Courier,User).filter(Courier.recv==User.id, Courier.collected== True, User.id==current_user.id).all()
+	couriers = db.session.query(Courier,User).filter(Courier.recv==User.id, Courier.collected== True, User.id==current_user.id, Courier.returned== False).all()
 	return render_template('collected_user.html', title='Uncollected', couriers=couriers)
 
 @app.route('/user/resend', methods=['GET', 'POST'])
@@ -206,3 +206,93 @@ def resend_key():
 		print (e)
 	flash('Check email inbox for verification key')
 	return redirect(url_for('uncollected_user'))
+
+@app.route('/user/cod', methods=['GET', 'POST'])
+@login_required
+@level_required(0)
+def addcod():
+	form = AddCodForm()
+	if form.validate_on_submit():
+		user = current_user
+		codcourier = CourierCod(title=form.title.data, recv=user.id , tracking_id=form.tracking_id.data, amount=form.amount.data)
+		db.session.add(codcourier)
+		db.session.commit()
+		try:
+			email_new_cod(user,codcourier)
+		except Exception as e:
+			print (e)
+		flash('Successfully Requested Cod')
+		return redirect(url_for('home'))
+	return render_template('codadd.html', title='COD Request', form=form)
+
+@app.route('/user/codlist')
+@login_required
+@level_required(0)
+def codlist():
+	couriers = db.session.query(CourierCod,User).filter(CourierCod.recv==User.id, User.id==current_user.id).order_by(CourierCod.id.desc()).all()
+	return render_template('codlist.html', title='COD List', couriers=couriers)
+
+@app.route('/admin/pendingcod')
+@login_required
+@level_required(1)
+def pendingcod():
+	couriers = db.session.query(CourierCod,User).filter(CourierCod.recv==User.id, (CourierCod.approved==False or CourierCod.arrived== False) ).order_by(CourierCod.id.desc()).all()
+	return render_template('admincp.html', title='COD Pending List', couriers=couriers)
+
+@app.route('/admin/approve', methods=['GET', 'POST'])
+@login_required
+@level_required(1)
+def approve():
+	try:
+		courier_id = int(request.args.get("id"))
+	except Exception as e:
+		print (e)
+		flash('Invalid COD Id')
+		return redirect(url_for('home'))
+	courier = CourierCod.query.filter_by(id=courier_id, approved=False).first()
+	if not courier:
+		flash('Invalid COD Id')
+		return redirect(url_for('home'))
+	user = User.query.filter_by(id=courier.recv).first()
+	courier.approved=True
+	db.session.commit()
+	try:
+		email_cod_approved(user,courier)
+	except Exception as e:
+		print (e)
+	flash('Successfully Approved')
+	return redirect(url_for('home'))
+
+@app.route('/admin/arrived', methods=['GET', 'POST'])
+@login_required
+@level_required(1)
+def arrived():
+	try:
+		courier_id = int(request.args.get("id"))
+	except Exception as e:
+		print (e)
+		flash('Invalid COD Id')
+		return redirect(url_for('home'))
+	courier = CourierCod.query.filter_by(id=courier_id, arrived=False, approved=True).first()
+	if not courier:
+		flash('Invalid COD Id')
+		return redirect(url_for('home'))
+	user = User.query.filter_by(id=courier.recv).first()
+	courier.arrived=True
+	key  = generateOTP()
+	c = Courier(title=courier.title, recv=user.id, verify_key=key, tracking_id=courier.tracking_id)
+	db.session.add(c)
+	db.session.commit()
+	try:
+		email_new(user,courier)
+	except Exception as e:
+		print (e)
+	flash('Successfully Marked as Arrived')
+	return redirect(url_for('home'))
+
+@app.route('/admin/completedcod')
+@login_required
+@level_required(1)
+def completedcod():
+	couriers = db.session.query(CourierCod,User).filter(CourierCod.recv==User.id, CourierCod.approved==True, CourierCod.arrived== True).order_by(CourierCod.id.desc()).all()
+	return render_template('adminca.html', title='COD Pending List', couriers=couriers)

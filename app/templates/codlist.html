@@ -2,27 +2,31 @@
 {% block content %}
 	<div class="container">
 		{% if couriers %}
-		<h2>Collected Couriers</h2>
+		<h2>COD Couriers</h2>
 		<table>
 		  <tr>
 		    <th>Receiver</th>
 		    <th>Receiver Roll</th>
 		    <th>Title</th> 
 		    <th>Tracking Id</th>
-		    <th>Collected On</th>
+		    <th>Status</th>
 		  </tr>
 		  {% for item in couriers %}
 		  	<tr>
 		  		<td> {{item.User.fname}} </td>
 		  		<td> {{item.User.roll}} </td>
-		  		<td> {{item.Courier.title}} </td>
-		  		<td> {{item.Courier.tracking_id}}</td>
-		  		<td> {{item.Courier.collected_time}} </td>
+		  		<td> {{item.CourierCod.title}} </td>
+		  		<td> {{item.CourierCod.tracking_id}}</td>
+		  		{% if item.CourierCod.approved %}
+		  			<td>Accepted</td>
+		  		{% else %}
+		  			<td>Pending</td>
+		  		{% endif %}
 		  	</tr>
 		  {% endfor %}
 		</table>
 		{% else %}
-		  	<h2>No Collected Couriers</h2>
+		  	<h2>No COD Couriers</h2>
 		{% endif %}
 	</div>
 {% endblock %}

@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="st-form-container">
+        <div class="st-form">
+                <h1>Request a new COD courier</h1>
+                <p>Provide the following details</p>
+                <form action="" method="post" novalidate autocomplete="off">
+                    {{ form.hidden_tag() }}
+                    <div class="st-form-field">
+                        {{ form.title(size=32) }}<br>
+                    </div>
+                    <div class="st-form-errors">
+                        {% for error in form.title.errors %}
+                        <span style="color: red;">[{{ error }}]</span>
+                        {% endfor %}
+                    </div>
+                    <div class="st-form-field">
+                        {{ form.amount(size=32) }}<br>
+                    </div>
+                    <div class="st-form-errors">
+                        {% for error in form.amount.errors %}
+                        <span style="color: red;">[{{ error }}]</span>
+                        {% endfor %}
+                    </div>
+                    <div class="st-form-field">
+                        {{ form.tracking_id(size=32) }}<br>
+                    </div>
+                    <div class="st-form-errors">
+                        {% for error in form.tracking_id.errors %}
+                        <span style="color: red;">[{{ error }}]</span>
+                        {% endfor %}
+                    </div>
+                    <p>{{ form.submit() }}</p>
+                </form>
+            </div>
+    </div>
+{% endblock %}

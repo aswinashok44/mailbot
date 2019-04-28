@@ -42,3 +42,17 @@ def email_new_user(user):
             recipient=user.email
             )
     return "success"
+
+def email_new_cod(user,courier):
+    send_mail("You Requested a COD Courier - Mailbot", 
+            htmlbody=render_template('emails/codnew.html', user=user, courier=courier), 
+            recipient=user.email
+            )
+    return "success"
+
+def email_cod_approved(user,courier):
+    send_mail("You COD Approved - Mailbot", 
+            htmlbody=render_template('emails/codapproved.html', user=user, courier=courier), 
+            recipient=user.email
+            )
+    return "success"

@@ -37,3 +37,12 @@ class Courier(db.Model):
 	returned = db.Column(db.Boolean, default=False)
 	collected_time = db.Column(db.DateTime)
 	verify_key = db.Column(db.String(6))
+
+class CourierCod(db.Model):
+	id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+	recv = db.Column(db.Integer, db.ForeignKey(User.id))
+	title = db.Column(db.String(256))
+	tracking_id = db.Column(db.String(256))
+	amount = db.Column(db.Integer)
+	approved = db.Column(db.Boolean, default=False)
+	arrived = db.Column(db.Boolean, default=False)

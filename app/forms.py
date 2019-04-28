@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField, IntegerField
 from wtforms.validators import DataRequired, Email, EqualTo, ValidationError
-from app.models import User, Courier
+from app.models import User, Courier, CourierCod
 
 class LoginForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired()], render_kw={"placeholder": "Email"})
@@ -58,3 +58,14 @@ class VerifyEmail(FlaskForm):
 		user = User.query.filter_by(id=self.id.data).first()
 		if user is None or user.verify != key.data :
 			raise ValidationError('Invalid key')
+
+
+class AddCodForm(FlaskForm):
+	title = StringField('Title', validators=[DataRequired()], render_kw={"placeholder": "Title"})
+	tracking_id = StringField('Tracking Id',validators=[DataRequired()], render_kw={"placeholder": "Tracking ID"})
+	amount = IntegerField('Amount', validators=[DataRequired()], render_kw={"placeholder": "Amount"})
+	submit = SubmitField('Request')
+	def validate_roll(self,roll):
+		user = User.query.filter_by(roll=roll.data.lower()).first()
+		if user is None:
+			raise ValidationError('Please use a valid roll number.')

@@ -10,6 +10,7 @@
 		    <th>Title</th> 
 		    <th>Tracking Id</th>
 		    <th>Mark Collected</th>
+		    <th>Mark Returned</th>
 		  </tr>
 		  {% for item in couriers %}
 		  	<tr>
@@ -18,6 +19,7 @@
 		  		<td> {{item.Courier.title}} </td>
 		  		<td> {{item.Courier.tracking_id}}</td>
 		  		<td> <button type="button" onclick="window.location.href='/admin/mark?id={{item.Courier.id}}'">Mark Collected</button> </td>
+		  		<td> <button type="button" onclick="window.location.href='/admin/returned?id={{item.Courier.id}}'">Mark Returned</button> </td>
 		  	</tr>
 		  {% endfor %}
 		</table>

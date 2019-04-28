@@ -9,6 +9,7 @@
 		    <th>Receiver Roll</th>
 		    <th>Title</th> 
 		    <th>Tracking Id</th>
+		    <th>Amount</th>
 		  </tr>
 		  {% for item in couriers %}
 		  	<tr>
@@ -16,6 +17,7 @@
 		  		<td> {{item.User.roll}} </td>
 		  		<td> {{item.CourierCod.title}} </td>
 		  		<td> {{item.CourierCod.tracking_id}}</td>
+		  		<td> {{item.CourierCod.amount}}</td>
 		  	</tr>
 		  {% endfor %}
 		</table>

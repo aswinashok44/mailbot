@@ -35,6 +35,13 @@ def email_collected(user,courier):
             )
     return "success"
 
+def email_returned(user,courier):
+    send_mail("Courier Returned - Mailbot", 
+            htmlbody=render_template('emails/returned.html', user=user, courier=courier), 
+            recipient=user.email
+            )
+    return "success"
+
 
 def email_new_user(user):
     send_mail("Welcome - Mailbot", 

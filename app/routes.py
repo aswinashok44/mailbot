@@ -6,7 +6,7 @@ from app.forms import LoginForm, RegistrationForm, AddForm, MarkCollected, Verif
 from flask import render_template, redirect, url_for, request
 from flask_login import current_user, login_user, login_required, logout_user
 from app.models import User, Courier, CourierCod
-from app.mail import email_new,email_collected, email_new_user, email_new_cod, email_cod_approved
+from app.mail import email_new,email_collected, email_new_user, email_new_cod, email_cod_approved, email_returned
 from werkzeug.security import generate_password_hash, check_password_hash
 import math, random, datetime
 
@@ -284,7 +284,7 @@ def arrived():
 	db.session.add(c)
 	db.session.commit()
 	try:
-		email_new(user,courier)
+		email_new(user,c)
 	except Exception as e:
 		print (e)
 	flash('Successfully Marked as Arrived')
@@ -296,3 +296,42 @@ def arrived():
 def completedcod():
 	couriers = db.session.query(CourierCod,User).filter(CourierCod.recv==User.id, CourierCod.approved==True, CourierCod.arrived== True).order_by(CourierCod.id.desc()).all()
 	return render_template('adminca.html', title='COD Pending List', couriers=couriers)
+
+
+@app.route('/admin/returned', methods=['GET', 'POST'])
+@login_required
+@level_required(1)
+def mark_returned():
+	try:
+		courier_id = int(request.args.get("id"))
+	except Exception as e:
+		print (e)
+		flash('Invalid Courier Id')
+		return redirect(url_for('home'))
+	courier = Courier.query.filter_by(id=courier_id, collected=False, returned=False).first()
+	if not courier:
+		flash('Invalid Courier Id')
+		return redirect(url_for('home'))
+	user = User.query.filter_by(id=courier.recv).first()
+	courier.returned = True
+	db.session.commit()
+	try:
+		email_returned(user,courier)
+	except Exception as e:
+		print (e)
+	flash('Courier Marked as Returned')
+	return redirect(url_for('home'))
+
+@app.route('/user/returned')
+@login_required
+@level_required(0)
+def returned_user():
+	couriers = db.session.query(Courier,User).filter(Courier.recv==User.id, Courier.collected== False, User.id==current_user.id, Courier.returned== True).all()
+	return render_template('returned_user.html', title='Uncollected', couriers=couriers)
+
+@app.route('/admin/returnedlist')
+@login_required
+@level_required(1)
+def returned_admin():
+	couriers = db.session.query(Courier,User).filter(Courier.recv==User.id, Courier.collected== False, Courier.returned== True).all()
+	return render_template('returned_admin.html', title='Uncollected', couriers=couriers)

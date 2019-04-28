@@ -6,8 +6,9 @@
 
         <div class="st-form">
             <h1>Verify Email</h1>
+            <p>We've sent you a verification code to your email. Please verify your email.</p>
             <br>
-            <form action="" method="post" novalidate autocomplete="off">
+            <form action="" method="post" novalidate autocomplete="off" style="max-width: 350px;">
                 {{ form.hidden_tag() }}
                 <div class="st-form-field">
                     {{ form.key(size=32) }}<br>
@@ -20,7 +21,7 @@
                 <p>{{ form.submit() }}</p>
             </form>
             <br>
-            <p>Didn't get welcome mail ? <a href="/resend">Resend</a></p>
+            <p>Didn't get welcome mail ? <a href="/resend"><span class="link">Resend</span></a></p>
         </div>
     
     </div>

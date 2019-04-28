@@ -1,10 +1,16 @@
 {% extends "base.html" %}
 {% block content %}
+
+	<link rel="stylesheet" href="/static/css/tables.css">
+
 	<div class="container">
 		{% if couriers %}
+
 		<h2>Returned Couriers</h2>
+		<a href="/">Go back home</a>
+		
 		<table>
-		  <tr>
+		  <tr class="capitalise">
 		    <th>Receiver</th>
 		    <th>Receiver Roll</th>
 		    <th>Title</th> 
@@ -13,7 +19,7 @@
 		  {% for item in couriers %}
 		  	<tr>
 		  		<td> {{item.User.fname}} </td>
-		  		<td> {{item.User.roll}} </td>
+		  		<td class="capitalise"> {{item.User.roll}} </td>
 		  		<td> {{item.Courier.title}} </td>
 		  		<td> {{item.Courier.tracking_id}}</td>
 		  	</tr>

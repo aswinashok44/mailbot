@@ -6,6 +6,15 @@
     align-items: center;
 }
 
+.st-form-container a{
+    color: #000;
+    text-decoration: none;
+}
+
+.st-form-container a .link{
+    border-bottom: 2px solid #000;
+}
+
 .st-form p{
     margin-bottom: 15px;
 }
